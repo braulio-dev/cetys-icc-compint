@@ -4,3 +4,5 @@ seaborn
 scikit-learn
 ipykernel
 kagglehub[pandas-datasets]
+skl2onnx
+onnxruntime
