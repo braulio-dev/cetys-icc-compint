@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gaming Addiction Risk Predictor</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.20.1/dist/ort.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Gaming Addiction Risk Predictor</h1>
+      <p>Fill in the fields below to assess gaming addiction risk level.</p>
+    </header>
+
+    <div id="model-status" class="status loading">Loading model...</div>
+
+    <form id="prediction-form" novalidate>
+
+      <!-- Demographics -->
+      <section class="form-section">
+        <h2>Demographics</h2>
+        <div class="form-grid">
+          <div class="field">
+            <label for="age">Age</label>
+            <input type="number" id="age" name="age" min="13" max="35" step="1" placeholder="13 – 35" required />
+            <span class="error"></span>
+          </div>
+          <div class="field">
+            <label for="gender">Gender</label>
+            <select id="gender" name="gender" required>
+              <option value="">Select...</option>
+              <option>Male</option>
+              <option>Female</option>
+              <option>Other</option>
+            </select>
+            <span class="error"></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Gaming Habits -->
+      <section class="form-section">
+        <h2>Gaming Habits</h2>
+        <div class="form-grid">
+          <div class="field">
+            <label for="daily_gaming_hours">Daily Gaming Hours</label>
+            <input type="number" id="daily_gaming_hours" name="daily_gaming_hours" min="0.5" max="15.1" step="0.1" placeholder="0.5 – 15.1" required />
+            <span class="error"></span>
+          </div>
+          <div class="field">
+            <label for="years_gaming">Years Gaming</label>
+            <input type="number" id="years_gaming" name="years_gaming" min="1" max="20" step="1" placeholder="1 – 20" required />
+            <span class="error"></span>
+          </div>
+          <div class="field">
+            <label for="game_genre">Game Genre</label>
+            <select id="game_genre" name="game_genre" required>
+              <option value="">Select...</option>
+              <option>MOBA</option>
+              <option>RPG</option>
+              <option>MMO</option>
+              <option>Battle Royale</option>
+              <option>Strategy</option>
+              <option>Mobile Games</option>
+              <option>FPS</option>
+            </select>
+            <span class="error"></span>
+          </div>
+          <div class="field">
+            <label for="gaming_platform">Platform</label>
+            <select id="gaming_platform" name="gaming_platform" required>
+              <option value="">Select...</option>
+              <option>PC</option>
+              <option>Mobile</option>
+              <option>Console</option>
+              <option>Multi-platform</option>
+            </select>
+            <span class="error"></span>
+          </div>
+          <div class="field">
+            <label for="monthly_game_spending_usd">Monthly Spending (USD)</label>
+            <input type="number" id="monthly_game_spending_usd" name="monthly_game_spending_usd" min="0" max="500" step="0.01" placeholder="0 – 500" required />
+            <span class="error"></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Sleep & Physical Health -->
+      <section class="form-section">
+        <h2>Sleep &amp; Physical Health</h2>
+        <div class="form-grid">
+          <div class="field">
+            <label for="sleep_hours">Daily Sleep Hours</label>
+            <input type="number" id="sleep_hours" name="sleep_hours" min="3" max="9" step="0.1" placeholder="3 – 9" required />
+            <span class="error"></span>
+          </div>
+          <div class="field">
+            <label for="sleep_quality">Sleep Quality</label>
+            <select id="sleep_quality" name="sleep_quality" required>
+              <option value="">Select...</option>
+              <option>Good</option>
+              <option>Fair</option>
+              <option>Poor</option>
+              <option>Very Poor</option>
+              <option>Insomnia</option>
+            </select>
+            <span class="error"></span>
+          </div>
+          <div class="field">
+            <label for="sleep_disruption_frequency">Sleep Disruption Frequency</label>
+            <select id="sleep_disruption_frequency" name="sleep_disruption_frequency" required>
+              <option value="">Select...</option>
+              <option>Never</option>
+              <option>Rarely</option>
+              <option>Sometimes</option>
+              <option>Often</option>
+              <option>Always</option>
+            </select>
+            <span class="error"></span>
+          </div>
+          <div class="field">
+            <label for="weight_change_kg">Weight Change (kg)</label>
+            <input type="number" id="weight_change_kg" name="weight_change_kg" min="0" max="9" step="0.1" placeholder="0 – 9" required />
+            <span class="error"></span>
+          </div>
+          <div class="field">
+            <label for="exercise_hours_weekly">Exercise Hours / Week</label>
+            <input type="number" id="exercise_hours_weekly" name="exercise_hours_weekly" min="0" max="12" step="0.1" placeholder="0 – 12" required />
+            <span class="error"></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Mental Health & Social -->
+      <section class="form-section">
+        <h2>Mental Health &amp; Social</h2>
+        <div class="form-grid">
+          <div class="field">
+            <label for="mood_state">Current Mood State</label>
+            <select id="mood_state" name="mood_state" required>
+              <option value="">Select...</option>
+              <option>Normal</option>
+              <option>Anxious</option>
+              <option>Irritable</option>
+              <option>Restless</option>
+              <option>Euphoric</option>
+              <option>Angry</option>
+              <option>Depressed</option>
+              <option>Withdrawn</option>
+              <option>Excited</option>
+            </select>
+            <span class="error"></span>
+          </div>
+          <div class="field">
+            <label for="mood_swing_frequency">Mood Swing Frequency</label>
+            <select id="mood_swing_frequency" name="mood_swing_frequency" required>
+              <option value="">Select...</option>
+              <option>Never</option>
+              <option>Rarely</option>
+              <option>Sometimes</option>
+              <option>Often</option>
+              <option>Daily</option>
+            </select>
+            <span class="error"></span>
+          </div>
+          <div class="field">
+            <label for="social_isolation_score">Social Isolation Score</label>
+            <input type="number" id="social_isolation_score" name="social_isolation_score" min="1" max="10" step="1" placeholder="1 (low) – 10 (high)" required />
+            <span class="error"></span>
+          </div>
+          <div class="field">
+            <label for="face_to_face_social_hours_weekly">Face-to-Face Social Hours / Week</label>
+            <input type="number" id="face_to_face_social_hours_weekly" name="face_to_face_social_hours_weekly" min="0" max="17" step="0.1" placeholder="0 – 17" required />
+            <span class="error"></span>
+          </div>
+          <div class="field">
+            <label for="academic_work_performance">Academic / Work Performance</label>
+            <select id="academic_work_performance" name="academic_work_performance" required>
+              <option value="">Select...</option>
+              <option>Excellent</option>
+              <option>Good</option>
+              <option>Average</option>
+              <option>Below Average</option>
+              <option>Poor</option>
+              <option>Failing</option>
+            </select>
+            <span class="error"></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Behavioral Indicators -->
+      <section class="form-section">
+        <h2>Behavioral Indicators</h2>
+        <div class="checkbox-grid">
+          <label class="checkbox-field">
+            <input type="checkbox" id="withdrawal_symptoms" name="withdrawal_symptoms" />
+            <span>Withdrawal symptoms when not gaming</span>
+          </label>
+          <label class="checkbox-field">
+            <input type="checkbox" id="loss_of_other_interests" name="loss_of_other_interests" />
+            <span>Loss of interest in other activities</span>
+          </label>
+          <label class="checkbox-field">
+            <input type="checkbox" id="continued_despite_problems" name="continued_despite_problems" />
+            <span>Continued gaming despite problems</span>
+          </label>
+          <label class="checkbox-field">
+            <input type="checkbox" id="eye_strain" name="eye_strain" />
+            <span>Eye strain</span>
+          </label>
+          <label class="checkbox-field">
+            <input type="checkbox" id="back_neck_pain" name="back_neck_pain" />
+            <span>Back or neck pain</span>
+          </label>
+        </div>
+      </section>
+
+      <button type="submit" id="submit-btn" disabled>Run Prediction</button>
+    </form>
+
+    <div id="result" class="result hidden">
+      <p class="result-label">Predicted Risk Level</p>
+      <div id="risk-badge" class="risk-badge"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
