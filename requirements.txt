@@ -6,3 +6,4 @@ ipykernel
 kagglehub[pandas-datasets]
 skl2onnx
 onnxruntime
+torch
