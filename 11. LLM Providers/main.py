@@ -1,4 +1,4 @@
-from openai import OpenAI
+from anthropic import Anthropic
 import os
 from dotenv import load_dotenv
 
@@ -6,24 +6,27 @@ SYSTEM_MESSAGE = "You are a chatbot. You will have a conversation with a user. B
 
 if __name__ == "__main__":
     load_dotenv()
-    URL = os.environ.get('OPENAI_BASE_URL')
-    KEY = os.environ.get('OPENAI_KEY')
+    URL = os.environ.get('API_BASE_URL')
+    KEY = os.environ.get('API_KEY')
     MODEL = os.environ.get('MODEL')
 
-    client = OpenAI(
+    client = Anthropic(
         base_url=URL,
         api_key=KEY,
     )
 
     print(f"Chatting with {MODEL} model at {URL}\n")
 
+    messages = []
     while True:
         message = input("> ")
-        response = client.chat.completions.create(
+        messages.append({'role': 'user', 'content': message})
+        response = client.messages.create(
             model=MODEL,
-            messages=[
-                {'role': 'system', 'content': SYSTEM_MESSAGE},
-                {'role': 'user', 'content': message},
-            ]
+            max_tokens=1024,
+            system=SYSTEM_MESSAGE,
+            messages=messages,
         )
-        print(response.choices[0].message.content)
+        reply = response.content[0].text
+        messages.append({'role': 'assistant', 'content': reply})
+        print(reply)
